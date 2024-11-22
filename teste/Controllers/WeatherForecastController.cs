@@ -7,40 +7,43 @@ namespace teste.Controllers
     [Route("jair")]
     public class WeatherForecastController : ControllerBase
     {
-        AppDbContext _db;
-        public WeatherForecastController(AppDbContext db)
+        IDatabaseService _dbService;
+
+        public WeatherForecastController(IDatabaseService dbService)
         {
-            _db = db;
+
+            _dbService = dbService;
         }
 
         [HttpGet]
         public List<Produto> Get()
         {
-            return this._db.Produtos.ToList();
-
+            return this._dbService.GetAllProdutos();
         }
 
         [HttpGet("{id}")]
         public Produto? Get(int id)
         {
-            return this._db.Produtos.FirstOrDefault(x => x.Id == id);
+            return this._dbService.GetProdutoById(id);
         }
 
         [HttpPost]
         public Produto Post(Produto produto)
         {
-            _db.Produtos.Add(produto);
-            _db.SaveChanges();
-
-            return produto;
+            return this._dbService.CreateProduto(produto);
         }
 
 
-        [HttpGet("{x}/{y}")] 
-        public int Teste(int x, int y)
+        [HttpDelete("{id}")]
+        public string Delete(int id)
         {
-            return x+y;
+            return this._dbService.DeleteProduto(id);
         }
 
+        [HttpPut()]
+        public Produto? AtualizarProduto(Produto produto)
+        {
+            return _dbService.UpdateProduto(produto);
+        }
     }
 }
